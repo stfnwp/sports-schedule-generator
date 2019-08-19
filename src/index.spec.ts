@@ -1,4 +1,4 @@
-import initGameday from "./index";
+import { initGameday, generateGameday } from "./index";
 import Gameday from "./gameday";
 
 describe("initGameday", () => {
@@ -18,5 +18,35 @@ describe("initGameday", () => {
       rightJoker: { home: "c", away: "f" }
     };
     expect(initGameday(["a", "b", "c", "d", "e", "f"])).toEqual(expectedGameday);
+  });
+});
+
+describe("generateGameday", () => {
+  it("generates second gameday with four teams", () => {
+    const expectedGameday: Gameday = {
+      leftJoker: { home: "d", away: "a" },
+      buckets: [{ home: "b", away: "c" }],
+      rightJoker: undefined
+    };
+    const firstGameday: Gameday = {
+      leftJoker: undefined,
+      buckets: [{ home: "a", away: "c" }],
+      rightJoker: { home: "b", away: "d" }
+    };
+    expect(generateGameday(firstGameday)).toEqual(expectedGameday);
+  });
+
+  it("generates third gameday with four teams", () => {
+    const expectedGameday: Gameday = {
+      rightJoker: { home: "c", away: "d" },
+      buckets: [{ home: "b", away: "a" }],
+      leftJoker: undefined
+    };
+    const previousGameday: Gameday = {
+      leftJoker: { home: "d", away: "a" },
+      buckets: [{ home: "b", away: "c" }],
+      rightJoker: undefined
+    };
+    expect(generateGameday(previousGameday)).toEqual(expectedGameday);
   });
 });
