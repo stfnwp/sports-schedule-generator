@@ -76,3 +76,64 @@ export const generateGameday = (previousGameday: Gameday): Gameday => {
   }
   return shiftToRight(previousGameday);
 };
+
+export const generateGamedays = (teams: string[]): Gameday[] => {
+  const schedule: Gameday[] = [];
+  const firstGameday = initGameday(teams);
+  schedule.push(firstGameday);
+  let previousGameday = firstGameday;
+  for (let i = 1; i < teams.length - 1; i++) {
+    const gameday = generateGameday(previousGameday);
+    schedule.push(gameday);
+    previousGameday = gameday;
+  }
+  return schedule;
+};
+
+const createMatch = (match: Match, switchSides = true): Match => {
+  if (!match) {
+    return;
+  }
+  const createdMatch = R.clone(match);
+  if (switchSides) {
+    createdMatch.home = match.away;
+    createdMatch.away = match.home;
+  }
+  return createdMatch;
+};
+
+const gamedayToMatchArray = (gameday: Gameday, switchSides: boolean): Match[] => {
+  const matches: Match[] = [];
+  if (gameday.leftJoker) {
+    matches.push(createMatch(gameday.leftJoker, false)); // jokers already swept by algorithm
+  }
+  if (gameday.rightJoker) {
+    matches.push(createMatch(gameday.rightJoker, false)); // jokers already swept by algorithm
+  }
+  for (const bucketMatch of gameday.buckets) {
+    matches.push(createMatch(bucketMatch, switchSides));
+  }
+  return matches;
+};
+
+const createRematchSchedule = (schedule: [Match[]]): [Match[]] => {
+  const rematchSchedule: [Match[]] = [];
+  for (const matches of schedule) {
+    const rematches: Match[] = R.map(createMatch, matches);
+    rematchSchedule.push(rematches);
+  }
+  return rematchSchedule;
+};
+
+export const generateSchedule = (teams: string[], rematch = false): [Match[]] => {
+  let schedule: [Match[]] = [];
+  const gamedays = generateGamedays(teams);
+  for (let i = 0; i < gamedays.length; i++) {
+    const switchSides = i % 2 == 0;
+    schedule.push(gamedayToMatchArray(gamedays[i], switchSides));
+  }
+  if (rematch) {
+    schedule = R.concat(schedule, createRematchSchedule(schedule));
+  }
+  return schedule;
+};
