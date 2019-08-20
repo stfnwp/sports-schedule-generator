@@ -1,4 +1,4 @@
 export default class Match {
-  home: string | undefined;
-  away: string | undefined;
+  home: T | undefined;
+  away: T | undefined;
 }

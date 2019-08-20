@@ -69,7 +69,7 @@ export const generateGameday = (previousGameday: Gameday): Gameday => {
   return shiftToRight(previousGameday);
 };
 
-export const generateGamedays = (teams: string[]): Gameday[] => {
+export const generateGamedays = (teams: t[]): Gameday[] => {
   const schedule: Gameday[] = [];
   const firstGameday = initGameday(teams);
   schedule.push(firstGameday);
@@ -117,7 +117,7 @@ const createRematchSchedule = (schedule: [Match[]]): [Match[]] => {
   return rematchSchedule;
 };
 
-export const generateSchedule = (teams: string[], rematch = false): [Match[]] => {
+export const generateSchedule = (teams: T[], rematch = false): [Match[]] => {
   let schedule: [Match[]] = [];
   const gamedays = generateGamedays(teams);
   for (let i = 0; i < gamedays.length; i++) {
