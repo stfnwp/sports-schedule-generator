@@ -135,3 +135,21 @@ describe("generate schedule with rematch", () => {
     expect(schedule[5]).toEqual(expectedGameday6);
   });
 });
+
+describe("generate schedule for arbitrary objects", () => {
+  it("generates schedule with 3 gamedays for 4 objects", () => {
+    const team1 = { myteamname: "foo", myplayers: [] };
+    const team2 = { myteamname: "bar", myplayers: [] };
+    const team3 = { myteamname: "baz", myplayers: [] };
+    const team4 = { myteamname: "foobar", myplayers: [] };
+    const expectedGameday1 = [{ home: team2, away: team4 }, { home: team3, away: team1 }];
+    const expectedGameday2 = [{ home: team4, away: team1 }, { home: team2, away: team3 }];
+    const expectedGameday3 = [{ home: team3, away: team4 }, { home: team1, away: team2 }];
+
+    const schedule = generateSchedule([team1, team2, team3, team4]);
+    expect(schedule).toHaveLength(3);
+    expect(schedule[0]).toEqual(expectedGameday1);
+    expect(schedule[1]).toEqual(expectedGameday2);
+    expect(schedule[2]).toEqual(expectedGameday3);
+  });
+});
