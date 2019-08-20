@@ -2,31 +2,23 @@ import * as R from "ramda";
 import Gameday from "./gameday";
 import Match from "./match";
 
-interface IndexedTeam {
-  index: number;
-  team: string;
-}
-
-const zipToIndexedTeam = (idx: number, name: string): IndexedTeam => ({ index: idx, team: name });
-
-export const initGameday = (teams: string[]): Gameday => {
+export const initGameday = (allTeams: T[]): Gameday => {
   const gameday = new Gameday();
-  const bucketCount = teams.length / 2 - 1;
+  const bucketCount = allTeams.length / 2 - 1;
   const rightJokerMatch = new Match();
-  rightJokerMatch.away = R.last(teams);
+  rightJokerMatch.away = R.last(allTeams);
   gameday.rightJoker = rightJokerMatch;
-  const indexedTeams = R.zipWith(zipToIndexedTeam, R.range(1, R.length(teams) + 1), teams);
-  let regularIndexedTeams = R.init(indexedTeams);
+  let teams = R.init(allTeams);
   for (let i = 0; i < bucketCount; i++) {
-    const firstTeam = R.head(regularIndexedTeams);
-    const lastTeam = R.last(regularIndexedTeams);
+    const firstTeam = R.head(teams);
+    const lastTeam = R.last(teams);
     const match = new Match();
-    match.home = firstTeam.team;
-    match.away = lastTeam.team;
+    match.home = firstTeam;
+    match.away = lastTeam;
     gameday.buckets.push(match);
-    regularIndexedTeams = R.init(R.tail(regularIndexedTeams));
+    teams = R.init(R.tail(teams));
   }
-  rightJokerMatch.home = regularIndexedTeams[0].team; // assign last remaining team
+  rightJokerMatch.home = teams[0]; // assign last remaining team
   return gameday;
 };
 
