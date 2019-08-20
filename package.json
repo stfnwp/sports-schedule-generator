@@ -1,7 +1,7 @@
 {
-  "name": "sports-fixtures-generator",
+  "name": "sports-schedule-generator",
   "version": "0.0.1",
-  "description": "Generates fixtures primarily used in team sports",
+  "description": "Generates schedules primarily used in team sports",
   "main": "src/index.ts",
   "scripts": {
     "type-check": "tsc --noEmit",
@@ -13,19 +13,19 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/stfnwp/sports-fixtures-generator.git"
+    "url": "git+https://github.com/stfnwp/sports-schedule-generator.git"
   },
   "keywords": [
     "sports",
-    "fixtures",
+    "schedule",
     "generator"
   ],
   "author": "Stefan Prosiegel <stefan.prosiegel@googlemail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/stfnwp/sports-fixtures-generator/issues"
+    "url": "https://github.com/stfnwp/sports-schedule-generator/issues"
   },
-  "homepage": "https://github.com/stfnwp/sports-fixtures-generator#readme",
+  "homepage": "https://github.com/stfnwp/sports-schedule-generator#readme",
   "devDependencies": {
     "@babel/cli": "^7.5.5",
     "@babel/core": "^7.5.5",

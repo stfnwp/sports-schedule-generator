@@ -1,2 +1,2 @@
-# sports-fixtures-generator
-Generates fixtures primarily used in team sports
+# sports-schedule-generator
+Generates schedules primarily used in team sports
