@@ -4,7 +4,6 @@ import Gameday from "./gameday";
 describe("initGameday", () => {
   it("initializes first gameday with four teams", () => {
     const expectedGameday: Gameday = {
-      leftJoker: undefined,
       buckets: [{ home: "a", away: "c" }],
       rightJoker: { home: "b", away: "d" }
     };
@@ -13,7 +12,6 @@ describe("initGameday", () => {
 
   it("initializes first gameday with six teams", () => {
     const expectedGameday: Gameday = {
-      leftJoker: undefined,
       buckets: [{ home: "a", away: "e" }, { home: "b", away: "d" }],
       rightJoker: { home: "c", away: "f" }
     };
@@ -25,11 +23,9 @@ describe("generateGameday", () => {
   it("generates second gameday with four teams", () => {
     const expectedGameday: Gameday = {
       leftJoker: { home: "d", away: "a" },
-      buckets: [{ home: "b", away: "c" }],
-      rightJoker: undefined
+      buckets: [{ home: "b", away: "c" }]
     };
     const firstGameday: Gameday = {
-      leftJoker: undefined,
       buckets: [{ home: "a", away: "c" }],
       rightJoker: { home: "b", away: "d" }
     };
@@ -39,13 +35,11 @@ describe("generateGameday", () => {
   it("generates third gameday with four teams", () => {
     const expectedGameday: Gameday = {
       rightJoker: { home: "c", away: "d" },
-      buckets: [{ home: "b", away: "a" }],
-      leftJoker: undefined
+      buckets: [{ home: "b", away: "a" }]
     };
     const previousGameday: Gameday = {
       leftJoker: { home: "d", away: "a" },
-      buckets: [{ home: "b", away: "c" }],
-      rightJoker: undefined
+      buckets: [{ home: "b", away: "c" }]
     };
     expect(generateGameday(previousGameday)).toEqual(expectedGameday);
   });
@@ -54,19 +48,16 @@ describe("generateGameday", () => {
 describe("generateGamedays", () => {
   it("generates 3 gamedays for 4 teams", () => {
     const expectedGameday1: Gameday = {
-      leftJoker: undefined,
       buckets: [{ home: "a", away: "c" }],
       rightJoker: { home: "b", away: "d" }
     };
     const expectedGameday2: Gameday = {
       leftJoker: { home: "d", away: "a" },
-      buckets: [{ home: "b", away: "c" }],
-      rightJoker: undefined
+      buckets: [{ home: "b", away: "c" }]
     };
     const expectedGameday3: Gameday = {
       rightJoker: { home: "c", away: "d" },
-      buckets: [{ home: "b", away: "a" }],
-      leftJoker: undefined
+      buckets: [{ home: "b", away: "a" }]
     };
 
     const gamedays = generateGamedays(["a", "b", "c", "d"]);

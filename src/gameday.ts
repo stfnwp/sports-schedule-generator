@@ -1,11 +1,5 @@
 import Match from "./match";
 
 export default class Gameday<T> {
-  leftJoker!: Match<T>;
-  rightJoker!: Match<T>;
-  buckets: Match<T>[];
-
-  constructor() {
-    this.buckets = [];
-  }
+  constructor(public leftJoker?: Match<T>, public rightJoker?: Match<T>, public buckets: Match<T>[] = []) {}
 }
