@@ -2,17 +2,17 @@ import * as R from "ramda";
 import Gameday from "./gameday";
 import Match from "./match";
 
-export const initGameday = (allTeams: T[]): Gameday => {
-  const gameday = new Gameday();
+export function initGameday<T>(allTeams: T[]): Gameday<T> {
+  const gameday = new Gameday<T>();
   const bucketCount = allTeams.length / 2 - 1;
-  const rightJokerMatch = new Match();
+  const rightJokerMatch = new Match<T>();
   rightJokerMatch.away = R.last(allTeams);
   gameday.rightJoker = rightJokerMatch;
   let teams = R.init(allTeams);
   for (let i = 0; i < bucketCount; i++) {
     const firstTeam = R.head(teams);
     const lastTeam = R.last(teams);
-    const match = new Match();
+    const match = new Match<T>();
     match.home = firstTeam;
     match.away = lastTeam;
     gameday.buckets.push(match);
@@ -20,57 +20,57 @@ export const initGameday = (allTeams: T[]): Gameday => {
   }
   rightJokerMatch.home = teams[0]; // assign last remaining team
   return gameday;
-};
+}
 
-const shiftToLeft = (previousGameday: Gameday): Gameday => {
-  const gameday = new Gameday();
-  const leftJokerMatch = new Match();
+function shiftToLeft<T>(previousGameday: Gameday<T>): Gameday<T> {
+  const gameday = new Gameday<T>();
+  const leftJokerMatch = new Match<T>();
   leftJokerMatch.home = previousGameday.rightJoker.away;
   leftJokerMatch.away = previousGameday.buckets[0].home;
   gameday.leftJoker = leftJokerMatch;
   for (let i = 0; i < previousGameday.buckets.length - 1; i++) {
-    const match = new Match();
+    const match = new Match<T>();
     match.home = previousGameday.buckets[i + 1].home;
     match.away = previousGameday.buckets[i].away;
     gameday.buckets.push(match);
   }
-  const lastMatch = new Match();
+  const lastMatch = new Match<T>();
   lastMatch.home = previousGameday.rightJoker.home;
   lastMatch.away = R.last(previousGameday.buckets).away;
   gameday.buckets.push(lastMatch);
-  gameday.rightJoker = undefined;
+  delete gameday.rightJoker;
   return gameday;
-};
+}
 
-const shiftToRight = (previousGameday: Gameday): Gameday => {
-  const gameday = new Gameday();
-  const rightJokerMatch = new Match();
+function shiftToRight<T>(previousGameday: Gameday<T>): Gameday<T> {
+  const gameday = new Gameday<T>();
+  const rightJokerMatch = new Match<T>();
   rightJokerMatch.home = R.last(previousGameday.buckets).away;
   rightJokerMatch.away = previousGameday.leftJoker.home;
   gameday.rightJoker = rightJokerMatch;
   for (let i = 1; i < previousGameday.buckets.length; i++) {
-    const match = new Match();
+    const match = new Match<T>();
     match.away = previousGameday.buckets[i - 1].away;
     match.home = previousGameday.buckets[i].home;
     gameday.buckets.push(match);
   }
-  const firstMatch = new Match();
+  const firstMatch = new Match<T>();
   firstMatch.home = previousGameday.buckets[0].home;
   firstMatch.away = previousGameday.leftJoker.away;
   gameday.buckets = R.prepend(firstMatch, gameday.buckets);
-  gameday.leftJoker = undefined;
+  delete gameday.leftJoker;
   return gameday;
-};
+}
 
-export const generateGameday = (previousGameday: Gameday): Gameday => {
+export function generateGameday<T>(previousGameday: Gameday<T>): Gameday<T> {
   if (!previousGameday.leftJoker) {
     return shiftToLeft(previousGameday);
   }
   return shiftToRight(previousGameday);
-};
+}
 
-export const generateGamedays = (teams: t[]): Gameday[] => {
-  const schedule: Gameday[] = [];
+export function generateGamedays<T>(teams: T[]): Gameday<T>[] {
+  const schedule: Gameday<T>[] = [];
   const firstGameday = initGameday(teams);
   schedule.push(firstGameday);
   let previousGameday = firstGameday;
@@ -80,22 +80,20 @@ export const generateGamedays = (teams: t[]): Gameday[] => {
     previousGameday = gameday;
   }
   return schedule;
-};
+}
 
-const createMatch = (match: Match, switchSides = true): Match => {
-  if (!match) {
-    return;
-  }
+function createMatch<T>(match: Match<T>, switchSides = true): Match<T> {
   const createdMatch = R.clone(match);
   if (switchSides) {
     createdMatch.home = match.away;
     createdMatch.away = match.home;
   }
   return createdMatch;
-};
+}
 
-const gamedayToMatchArray = (gameday: Gameday, switchSides: boolean): Match[] => {
-  const matches: Match[] = [];
+function gamedayToMatchArray<T>(gameday: Gameday<T>, switchSides: boolean): Match<T>[] {
+  const matches: Match<T>[] = [];
+
   if (gameday.leftJoker) {
     matches.push(createMatch(gameday.leftJoker, false)); // jokers already swept by algorithm
   }
@@ -106,19 +104,19 @@ const gamedayToMatchArray = (gameday: Gameday, switchSides: boolean): Match[] =>
     matches.push(createMatch(bucketMatch, switchSides));
   }
   return matches;
-};
+}
 
-const createRematchSchedule = (schedule: [Match[]]): [Match[]] => {
-  const rematchSchedule: [Match[]] = [];
+function createRematchSchedule<T>(schedule: Match<T>[][]): Match<T>[][] {
+  const rematchSchedule: Match<T>[][] = [];
   for (const matches of schedule) {
-    const rematches: Match[] = R.map(createMatch, matches);
+    const rematches: Match<T>[] = R.map(createMatch, matches);
     rematchSchedule.push(rematches);
   }
   return rematchSchedule;
-};
+}
 
-export const generateSchedule = (teams: T[], rematch = false): [Match[]] => {
-  let schedule: [Match[]] = [];
+export function generateSchedule<T>(teams: T[], rematch = false): Match<T>[][] {
+  let schedule: Match<T>[][] = [];
   const gamedays = generateGamedays(teams);
   for (let i = 0; i < gamedays.length; i++) {
     const switchSides = i % 2 == 0;
@@ -128,4 +126,4 @@ export const generateSchedule = (teams: T[], rematch = false): [Match[]] => {
     schedule = R.concat(schedule, createRematchSchedule(schedule));
   }
   return schedule;
-};
+}
