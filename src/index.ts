@@ -36,7 +36,7 @@ function shiftToLeft<T>(previousGameday: Gameday<T>): Gameday<T> {
   }
   const lastMatch = new Match<T>();
   lastMatch.home = previousGameday.rightJoker && previousGameday.rightJoker.home;
-  lastMatch.away = R.last(previousGameday.buckets).away;
+  lastMatch.away = R.last(previousGameday.buckets)?.away;
   gameday.buckets.push(lastMatch);
   delete gameday.rightJoker;
   return gameday;
@@ -45,7 +45,7 @@ function shiftToLeft<T>(previousGameday: Gameday<T>): Gameday<T> {
 function shiftToRight<T>(previousGameday: Gameday<T>): Gameday<T> {
   const gameday = new Gameday<T>();
   const rightJokerMatch = new Match<T>();
-  rightJokerMatch.home = R.last(previousGameday.buckets).away;
+  rightJokerMatch.home = R.last(previousGameday.buckets)?.away;
   rightJokerMatch.away = previousGameday.leftJoker && previousGameday.leftJoker.home;
   gameday.rightJoker = rightJokerMatch;
   for (let i = 1; i < previousGameday.buckets.length; i++) {
