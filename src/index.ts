@@ -74,7 +74,8 @@ export function generateGamedays<T>(teams: T[]): Gameday<T>[] {
   const firstGameday = initGameday(teams);
   schedule.push(firstGameday);
   let previousGameday = firstGameday;
-  for (let i = 1; i < teams.length - 1; i++) {
+  const gamedayCount = teams.length % 2 == 0 ? teams.length - 1 : teams.length;
+  for (let i = 1; i < gamedayCount; i++) {
     const gameday = generateGameday(previousGameday);
     schedule.push(gameday);
     previousGameday = gameday;
@@ -95,13 +96,22 @@ function gamedayToMatchArray<T>(gameday: Gameday<T>, switchSides: boolean): Matc
   const matches: Match<T>[] = [];
 
   if (gameday.leftJoker) {
-    matches.push(createMatch(gameday.leftJoker, false)); // jokers already swept by algorithm
+    const match = createMatch(gameday.leftJoker, false);
+    if (match.home && match.away) {
+      matches.push(match); // jokers already swept by algorithm
+    }
   }
   if (gameday.rightJoker) {
-    matches.push(createMatch(gameday.rightJoker, false)); // jokers already swept by algorithm
+    const match = createMatch(gameday.rightJoker, false);
+    if (match.home && match.away) {
+      matches.push(match); // jokers already swept by algorithm
+    }
   }
   for (const bucketMatch of gameday.buckets) {
-    matches.push(createMatch(bucketMatch, switchSides));
+    const match = createMatch(bucketMatch, switchSides);
+    if (match.home && match.away) {
+      matches.push(match);
+    }
   }
   return matches;
 }
