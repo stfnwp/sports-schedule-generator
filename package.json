@@ -1,6 +1,6 @@
 {
   "name": "sports-schedule-generator",
-  "version": "0.0.5",
+  "version": "0.0.7",
   "description": "Generates schedules primarily used in team sports",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
